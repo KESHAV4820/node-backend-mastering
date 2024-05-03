@@ -9,7 +9,12 @@
 ⭕So what we need is a read file function that returns a promise, and it only receives a file name, not the callback function.
 ⭕Promise() constructor takes an "executor function". This gets called immideatly when the function is called. The body of the executor function is the real deal. It's where we do asynchronous works.
 ⭕ Both arguments "resolve" and "rejected" in EXECUTOR FUNCTIONS are themselves FUNCTIONS.👈😨 Calling resolve function would means success(that means, resolve() will take 'data' parameters of fs.readFile()) and calling rejected function means failure which will use 'error' parameter of fs.readFile().
-⭕
+⭕Concept: HOW THE WHOLE PROMISIFYING THING WORKS👉 
+▶ FIRST: our readFilePro() function returns PROMISE. 
+▶ second:.then() has callback functions that return the PROMISE. 
+▶ third: LearnByHeart And in the next .then() there is no promise getting returned, just the console.log(), so to keep the promises comming and use next .then() for chaining, we need to return something that returns promise. so we returned writeFilePro. 
+▶ FOURTH: next .then() is the place where we dont need to propagae the chain. It's end. So we wrote the code that do not return promise.
+▶ FIFTH:finally, .catch() to handle any kind of error. This is how they are chained. 
 
 */
 const fs = require('fs');
@@ -33,20 +38,21 @@ const writeFilePro= (file, dataToWrite) => {
         });
 	});
 };
-
+let dogName;
 readFilePro(`${__dirname}/dog.txt`).then((resolvedData) => {// it can be named any thing. 
     console.log(`Breed: ${resolvedData}`);//Code Testing
+    dogName = resolvedData;
+    //Since 'superagent' returns a promise.
+return superagent.get(`https://dog.ceo/api/breed/${resolvedData}/images/random`);
 
-superagent.get(`https://dog.ceo/api/breed/${resolvedData}/images/random`).then((response) => {	
-    // console.log(response.body.message);// Code Testing
-    fs.writeFile('dog-img.txt', response.body.message, (error) => {
-        if(error) return console.log(error);//if there is error, the program will return from here. Otherwise we go further👇
-
-        console.log(`${resolvedData} dog image saved to file!`);
+}).then((response) => {	
+     console.log(response.body.message);// Code Testing
+    return writeFilePro('dog-img.txt', response.body.message);
+	}).then(() => {	
+        console.log(`${dogName} dog image saved to file!`); 
+    }).catch((error) => {	console.log(error.message); 
     });
-	}).catch((error) => {	console.log(error.message);
-    	});
-	});
+
 
 
 fs.readFile(`${__dirname}/dog.txt`,(error, resolvedData)=>{
