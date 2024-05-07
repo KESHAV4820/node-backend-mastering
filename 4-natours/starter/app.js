@@ -142,6 +142,7 @@ const deleteTour=(request, response) => {	if (request.params.id *1 > toursData.l
 };
 
 
+/*legacy code code migrated 👇👇
 app.get('/api/v1/tours', getAllToursData);// VIE "getAllToursData" is called "Route handler" function.👉'/api/v1/tours' is a route and /tours is the resource that is being asked for. When a client hits this route, we do:- 👉 next arrow function where the next part of the process is undertaken.
 
 app.get('/api/v1/tours/:id',getTour);//Marvel we defined a variable to be passed in route carrying some value each time like page number. To do that, we declared it like ":id"👈😨😵😎😂. It could be like ":keshav". Your wish.
@@ -151,7 +152,11 @@ app.post('/api/v1/tours', createTour);//New Element Concept:  all the data being
 app.patch('/api/v1/tours/:id',updateTour);
 
 app.delete('/api/v1/tours/:id',deleteTour);// this whole code is exactly the same as patch. We only change the name of the function itself 'delete', status code of response to 204 meaning "Server has successfully done the job and the content can't be found anymore" and data value to null "data: null".
-
+*/
+// ConceptVIELearnByHeartBut above is a lengthy way to do the job. What if the resource name has to be changed. Then we shall need to do these changes in all of these places. We shall do routing in that case.
+//code upgrade👇👇
+app.route('/api/v1/tours').get(getAllToursData).post(createTour);
+app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
 const port =3000;
 app.listen(port, ()=>{
