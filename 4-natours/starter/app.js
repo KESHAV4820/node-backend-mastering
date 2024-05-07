@@ -60,7 +60,7 @@ app.post('/', (request, response) => {	response.send('You can post to this endpo
 // WE can't read data inside the server(app.get()), becouse it doesn't need reading again and again, every time some request is made. 👇 And we shall declare it outside in a blocking code manner. So that it is read only once(as outside) but for sure(syncronous code).
 const toursData = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)); 
 
-app.get('/api/v1/tours',(request, response) => {
+const getAllToursData=(request, response) => {
     response.status(200).json({
         status: 'success',
         results: toursData.length,
@@ -68,9 +68,8 @@ app.get('/api/v1/tours',(request, response) => {
             tours: toursData
         }
     });
-});// VIE this is called "Route handler" function.👉'/api/v1/tours' is a route and /tours is the resource that is being asked for. When a client hits this route, we do:- 👉 next arrow function where the next part of the process is undertaken.
-
-app.get('/api/v1/tours/:id',(request, response) => {
+};
+const getTour=(request, response) => {
     console.log(request.params);//New Element Output: {id: '5'}
 //app.get('/api/v1/tours/:id/:id2?/:id3?',(request,
     //VIEConcept 'request.params' is a very important object. It maps the value that was passed by client into our variable. Here 5. but if you have multiple variable which needs to be fed data and if you miss anyone, your routing breaks. Hence you need a way to make it optional. YOu do that by adding a "?"after the variable name.
@@ -96,11 +95,8 @@ app.get('/api/v1/tours/:id',(request, response) => {
             tour
         }
     });
-});//Marvel we defined a variable to be passed in route carrying some value each time like page number. To do that, we declared it like ":id"👈😨😵😎😂. It could be like ":keshav". Your wish.
-
-
-
-app.post('/api/v1/tours', (request, response) => {	
+};
+const createTour=(request, response) => {	
     console.log(request.body);// VIENotethe request object is getting access to the body property becouse it inherited the body parameter from the middleware.Output: { name: 'Test Tour', duration: '14 days', difficulty: 'moderate' } it's only becouse we have a middle ware. If there was not a middleware, it would be undefined. Concept: Now we have to persist this data present in the 'body' of the 'request'. And we can do that by writing it to the database or a file and this data will be accessed letter on to create the post.👇
     const newId = toursData[toursData.length - 1].id + 1;// VIEConcept: we are getting the last id of the array and adding 1 to it to assign the id number to new post. Becouse there is no id by default.
     const newTour = Object.assign({ id: newId }, request.body);// New ElementMarvel here we are using Object.assign({obj to be added},{added to obj}) to create a  new object that has both the Objected added to it. Another way to do it is request.body.id=newId. But didn't. Becouse we don't want to mutate the original data/object. 
@@ -115,9 +111,8 @@ app.post('/api/v1/tours', (request, response) => {
     });//VIECode 201 means Created.
     })// we are inside eventLoop. Hence using async funciton.
     //this code is being silenced as after creating the full code above, this becomes extra header to be sent for write. And that's not allowed. response.send('Done sending data.');//VIEConcept: we always need to send something to finally end the request and response cycle. 
-});//New Element Concept:  all the data being sent by the client to the server is stored in the variable "request". But by default, EXPRESS won't do it, that it, it won't write data on the request variable. Hence to do that, we need a "MIDDLE WARE".
-
-app.patch('/api/v1/tours/:id',(request, response) => {	if (request.params.id *1 > toursData.length) {
+};
+const updateTour=(request, response) => {	if (request.params.id *1 > toursData.length) {
     return response.status(400).json({
         status:'fail',
         message:'Invalid ID'
@@ -131,21 +126,32 @@ app.patch('/api/v1/tours/:id',(request, response) => {	if (request.params.id *1 
         }
         });
     
-	});
-
-app.delete('/api/v1/tours/:id',(request, response) => {	if (request.params.id *1 > toursData.length) {
-        return response.status(400).json({
-            status:'fail',
-            message:'Invalid ID'
+};
+const deleteTour=(request, response) => {	if (request.params.id *1 > toursData.length) {
+    return response.status(400).json({
+        status:'fail',
+        message:'Invalid ID'
+    });
+}
+    
+      response.status(204).json({
+        status:'success',
+        data:null
         });
-    }
-        
-          response.status(204).json({
-            status:'success',
-            data:null
-            });
-        
-        });// this whole code is exactly the same as patch. We only change the name of the function itself 'delete', status code of response to 204 meaning "Server has successfully done the job and the content can't be found anymore" and data value to null "data: null".
+    
+};
+
+
+app.get('/api/v1/tours', getAllToursData);// VIE "getAllToursData" is called "Route handler" function.👉'/api/v1/tours' is a route and /tours is the resource that is being asked for. When a client hits this route, we do:- 👉 next arrow function where the next part of the process is undertaken.
+
+app.get('/api/v1/tours/:id',getTour);//Marvel we defined a variable to be passed in route carrying some value each time like page number. To do that, we declared it like ":id"👈😨😵😎😂. It could be like ":keshav". Your wish.
+
+app.post('/api/v1/tours', createTour);//New Element Concept:  all the data being sent by the client to the server is stored in the variable "request". But by default, EXPRESS won't do it, that it, it won't write data on the request variable. Hence to do that, we need a "MIDDLE WARE".
+
+app.patch('/api/v1/tours/:id',updateTour);
+
+app.delete('/api/v1/tours/:id',deleteTour);// this whole code is exactly the same as patch. We only change the name of the function itself 'delete', status code of response to 204 meaning "Server has successfully done the job and the content can't be found anymore" and data value to null "data: null".
+
 
 const port =3000;
 app.listen(port, ()=>{
