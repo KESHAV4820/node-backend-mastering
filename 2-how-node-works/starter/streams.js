@@ -31,7 +31,7 @@ server.on('request', (request, response) => {
         readable.pipe(response);
     //    ⬆         ↖       ⬆
     //readableSource.pipe(writeableDestination)
-    //pipe operator is used to pipe the data from the source to the destination. You need to do this and nothing else. That's it😎. pipe takes care of opening and closing the stream and if any error comes behind the scene. You don't neet to finger it.
+    //pipe operator is used to pipe the data from the source to the destination. You need to do this and nothing else. That's it😎. pipe takes care of opening and closing the stream and if any error comes behind the scene. You don't neet to finger it.     
 });
-    server.listen( 8000, "127.0.0.1", ()=>{
+     server.listen( 8000, "127.0.0.1", ()=>{
      console.log(" ---SERVER IS LISTENING--- ")});
