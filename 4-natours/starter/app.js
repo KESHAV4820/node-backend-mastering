@@ -35,6 +35,23 @@
 👉 Note that every time you save somthing into json file, it reloads the whole server and page. So even if the code is outside the server section, it will be reloaded. Hence don't feel confused that how did it happened. It's a feature of json file handling in node.
 👉 TRICK😎😎 in JS : if you want to conver a number into string you need to concate ""empty space with it. Like 5+"" where + is concate operator. Similarly, if you have to convert a string into number you need to multiply it with some number. Eg. "5" * 1 will give a number type 5😊
 
+//----------Middle ware--------------
+1️⃣ A middleware is something like a function that lies between the "initial request" made by a user when comming to server and the final response that has to be returned finally. 
+2️⃣ ✔ You need to imagine it like a pipe or pipeline. 
+    It has start and end and length is divided into many section accroding to middleware stack, that is arrangement of middleware function in code.
+    ✔ the order of arrangement of middleware stack has different effect each time. And hence, it is called as middleware stack.
+    ✔ each middleware function has access to "next" function. And it is called generally at last so as to move the process to next middleware in the stack. It's important or the process will hang. 
+    ✔ all the middleware are basically functions that are in between and process the request and response. IN that sense, express and it's function, all of them, All, are middleware functions only.  
+3️⃣in each middleware function, we have access to the "(request, response, next)=>{}" parameters like it were passing from initial request stage on server to final response stage from server like it were passing from a tube or pipe.Remember It 👉Never forget to call next() function in a middleware. If you miss it, the request and response cycle would get jammed to one place. 
+4️⃣Middleware applies to each and every request. Why, becouse it owns a cross-section of pipeline. So you have to pass through their area(that is code in the middleware codestack) and it's not always the case but if we want to avoid one section, we need to make a branching in the pipe and using routing, we can decide if request has to reach a particular middleware or not. If we don't specify routing, by default, it is thought that the pipeline is made of a a single non-branching pipe. Hence, each of the section will have an access to the function parameters.
+5️⃣Conceptif the "route-handler" comes before the middleware, it may not be possible that all the middlewares will get access to request and response. becouse it is possible that router-handler may call a middleware that ends the request, response cycle before another middleware that may want it. But if the "route-handler" comes after the middlewares, each middleware that came before the route-handler will have access to request and response parameters of server. 
+6️⃣ Point number 5👆 is fundamental to the working of Express. Remember it. 
+7️⃣ we can download third party middlewares from NPM like "morgan". It is a third party loging(console.log()) middleware. It lets you see he requests made in your console. 
+8️⃣in order to implement separate file segement for each resource for better code structure, we will need to create router for each resources, that is, small subapp for each router.
+9️⃣
+🔟
+
+
 */
 
 
@@ -42,12 +59,31 @@
 const fs = require('fs');
 const express = require('express');
 const { ifError } = require('assert');
-
+const morgan=require('morgan');
+const tourRouter = require('./routes/tourRoutes');
+const userRouter = require('./routes/userRoutes');
+const { createSecureServer } = require('http2');
 
 const app=express();// here express will add many of it's method to app variable.
-app.use(express.json());// here ""app.use()" is as middleware". It's called middleware. Why! Becouse it stands between "request" and "response". It's just a step that request goes through, and the data from body is added to request object.
+//----------middle wares--------------
+app.use(morgan('dev'));// this returns [URL routes, status, time taken for response, size of response in bytes]
+app.use(express.json());// here ".use()" is as middleware. It's called middleware. Why! Becouse it stands between "request" and "response". It's just a step that request goes through, and the data from body is added to request object.It is used to add a middleware function in middleware. YOu can consider it as pipeline. But there are various sections of this pipeline and you are adding those sections by using .use() function and the parameter used like express.json() or any other function adds the specified function like a section to this pipeline.
+
+app.use((request, response, next) =>{
+    console.log(`hello from the middleware🥴. More like middle kingdom.`);
+    next();// forwarding the process to next section in pipeline(middleware) in 'initial request' and 'response' cycle.
+    }
+);// This middle ware applies to each and every single request. 
+app.use((request, response, next) =>{
+    request.requestTime = new Date().toISOString();//New Element
+    next();
+});
+
+
+//---------Route handlers----------------
 
 /*
+const toursData = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)); 
 app.get('/', (request, response)=>{ 
     // response.status(200).send('Hello World from SERVER Side😎');Alternative Code👇 since send() simply sends the string to client.Note If you want to send the object, you need to use json().
     response.status(200).json(
@@ -58,11 +94,13 @@ app.post('/', (request, response) => {	response.send('You can post to this endpo
 */
 
 // WE can't read data inside the server(app.get()), becouse it doesn't need reading again and again, every time some request is made. 👇 And we shall declare it outside in a blocking code manner. So that it is read only once(as outside) but for sure(syncronous code).
-const toursData = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)); 
-
+/* code migrated to tourRoutes.js
 const getAllToursData=(request, response) => {
+    console.log(request.requestTime);
+    
     response.status(200).json({
         status: 'success',
+        requestedAt: request.requestTime,
         results: toursData.length,
         data: {
             tours: toursData
@@ -140,8 +178,60 @@ const deleteTour=(request, response) => {	if (request.params.id *1 > toursData.l
         });
     
 };
-
-
+*/
+/*code migrated to userRoutes.js
+const getAllUsers=(request, response) => {
+    console.log(request.requestTime);
+    response.status(500).json({
+    status: 'error',
+    requestedAt: request.requestTime,
+    message: 'This route is not defined yet!',
+    results: toursData.length,
+    //data: {}
+    });
+};
+const createUser=(request, response) => {
+    console.log(request.requestTime);
+    response.status(500).json({
+    status: 'error',
+    //requestedAt: request.requestTime,
+    message: 'route not implemented yet'
+    //results: toursData.length,
+    //data: {	}
+    });
+};
+const getOneUser=(request, response) => {
+    console.log(request.requestTime);
+    response.status(500).json({
+    status: 'error',
+    //requestedAt: request.requestTime,
+    message: 'this route hasnt been implemented'
+    //results: toursData.length,
+    //data: { }
+    });
+};
+const updateUser=(request, response) => {
+    console.log(request.requestTime);
+    response.status(500).json({
+    status: 'error',
+    //requestedAt: request.requestTime,
+    message: 'this route hasnt been implemented'
+    //results: toursData.length,
+    //data: {	}
+    });
+};
+const deleteUser=(request, response) => {
+    console.log(request.requestTime);
+    response.status(500).json({
+    status: 'error',
+    //requestedAt: request.requestTime,
+    message: 'not yet implemented'
+    //results: toursData.length,
+    //data: {	}
+    });
+};
+*/
+//-----------------Routes-----------------
 /*legacy code code migrated 👇👇
 app.get('/api/v1/tours', getAllToursData);// VIE "getAllToursData" is called "Route handler" function.👉'/api/v1/tours' is a route and /tours is the resource that is being asked for. When a client hits this route, we do:- 👉 next arrow function where the next part of the process is undertaken.
 
@@ -154,10 +244,61 @@ app.patch('/api/v1/tours/:id',updateTour);
 app.delete('/api/v1/tours/:id',deleteTour);// this whole code is exactly the same as patch. We only change the name of the function itself 'delete', status code of response to 204 meaning "Server has successfully done the job and the content can't be found anymore" and data value to null "data: null".
 */
 // ConceptVIELearnByHeartBut above is a lengthy way to do the job. What if the resource name has to be changed. Then we shall need to do these changes in all of these places. We shall do routing in that case.
-//code upgrade👇👇
-app.route('/api/v1/tours').get(getAllToursData).post(createTour);
-app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour);
+//code upgrade👇👇New Element
+/*legacy codecode migrated👇👇Concept: here each resource is based on same one router. but if we want to put routers and router function of each type into their own files, we will need to implement multiple routers. So that has been done just below this Lagacy Code.
+app
+.route('/api/v1/tours')
+.get(getAllToursData)
+.post(createTour);
 
+app
+.route('/api/v1/tours/:id')
+.get(getTour).patch(updateTour)
+.delete(deleteTour);//Note:When you have a single resource like "tours," you typically have two types of routes: Routes that handle operations on the entire collection (e.g., /api/v1/tours for GET and POST requests) becouse there is no unique id associated with the path, hence it is either looking for all the objects in that resource or wants to create next new object in the same resource.But Routes that handle operations on individual items within the collection come with unique id to identify them (e.g., /api/v1/tours/:id for GET, PATCH, and DELETE requests). By separating them into two app.route() statements, you can better understand the purpose of each group of routes at a glance. It also makes it easier to maintain and modify the routes individually if needed.However, you are correct that you can combine them into a single app.route() statement
+app
+.route('/api/v1/users')
+.get(getAllUsers)
+.post(createUser);
+
+app
+.route('/api/v1/users/:id')
+.get(getOneUser)
+.patch(updateUser)
+.delete(deleteUser);
+*/
+//-----------multi-routing and mounting-----------
+/* code migrated to tourRouter.js in Routes folder.
+
+const tourRouter = express.Router();//VIENew Element we created new router and now we are going to associate this router with only one kind of resource by using the new Router name in place of "app" and using it like a middleware.Becouse, "tourRouter" in itself is a modular router itself. these two LOC above makes a sub-application or mini-apps within the big app.
+
+tourRouter
+.route('/')
+.get(getAllToursData)
+.post(createTour);
+tourRouter
+.route('/:id')
+.get(getTour).patch(updateTour)
+.delete(deleteTour);
+//Note(⬆) once we are in the tourRouter middleware, it is going to work on the '/api/v1/tours' path only. So we can avoid writing them again and again. Hence we need to mention only the part that is needed to specify the path and/or the part of the path that is unique with that request being made. '/' means root. that is root of the url '/api/v1/tours' and '/:id' is used becouse parent path + /:id = /api/v1/tours/:id which is exactly what we were trying to write. 😎 
+*/
+app.use('/api/v1/tours', tourRouter);// this line means that "tourRouter" is a middleware which has to be used for the path '/api/v1/tours' Now below is the middlware declaration function which happens to be an individual router as well. It is both, middleware and router, we desgined it like this.
+
+/* code migrated to userRoutes.js
+const usersRouter = express.Router();//declated new router😎
+usersRouter
+.route('/')
+.get(getAllUsers)
+.post(createUser);
+usersRouter
+.route('/:id')
+.get(getOneUser)
+.patch(updateUser)
+.delete(deleteUser);
+*/
+app.use('/api/v1/users',userRouter);//turned it a middle ware👺😂😂 VIEConcept this process is called as mounting a new router.  
+// LearnByHeart: this whole multirouting and mounting section has to be done before-hand to implement migration of different routers to different files moved in different folders. now these codes will be migrated
+
+//-----------starting a server-----------
 const port =3000;
 app.listen(port, ()=>{
     console.log(`App is running on port ${port}...`);
