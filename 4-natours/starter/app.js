@@ -48,8 +48,12 @@
 6️⃣ Point number 5👆 is fundamental to the working of Express. Remember it. 
 7️⃣ we can download third party middlewares from NPM like "morgan". It is a third party loging(console.log()) middleware. It lets you see he requests made in your console. 
 8️⃣in order to implement separate file segement for each resource for better code structure, we will need to create router for each resources, that is, small subapp for each router.
-9️⃣
-🔟
+9️⃣Concept we created different routers for different resources for having separation of concern between these resources.Basically, we created one small app or sub app for each of them(like tourRoutes.js or userRoutes.js) and putting them together in one main app file called app.js
+🔟Sub-routers has to be middleware or else show will you mount them onto bigger app router referance.
+1️⃣1️⃣ Creating "server.js file" but why!! 😨 becouse it's considered a good practise to keep all the things related to express in one file and every thing related to server in one file. 
+1️⃣2️⃣
+1️⃣3️⃣
+1️⃣4️⃣
 
 
 */
@@ -66,8 +70,8 @@ const { createSecureServer } = require('http2');
 
 const app=express();// here express will add many of it's method to app variable.
 //----------middle wares--------------
-app.use(morgan('dev'));// this returns [URL routes, status, time taken for response, size of response in bytes]
-app.use(express.json());// here ".use()" is as middleware. It's called middleware. Why! Becouse it stands between "request" and "response". It's just a step that request goes through, and the data from body is added to request object.It is used to add a middleware function in middleware. YOu can consider it as pipeline. But there are various sections of this pipeline and you are adding those sections by using .use() function and the parameter used like express.json() or any other function adds the specified function like a section to this pipeline.
+app.use(morgan('dev'));// this returns [URL routes, status Code, time taken for response, size of response in bytes]
+app.use(express.json());// here "app.use()" is as middleware. It's called middleware. Why! Becouse it stands between "request" and "response". It's just a step that request goes through, and the data from body is added to request object.It is used to add a middleware function in middleware. YOu can consider it as pipeline. But there are various sections of this pipeline and you are adding those sections by using app.use() function and the parameter used like express.json() or any other function adds the specified function like a section to this pipeline.
 
 app.use((request, response, next) =>{
     console.log(`hello from the middleware🥴. More like middle kingdom.`);
@@ -77,7 +81,7 @@ app.use((request, response, next) =>{
 app.use((request, response, next) =>{
     request.requestTime = new Date().toISOString();//New Element
     next();
-});
+});// here the date&time is filled into request.requestTime using Date object and turned into standard formate with .toISOString(). now while making response object in router-callback-functions, RequestedAt: property will be added and assigned the value of request.requestTime.
 
 
 //---------Route handlers----------------
@@ -281,7 +285,7 @@ tourRouter
 .delete(deleteTour);
 //Note(⬆) once we are in the tourRouter middleware, it is going to work on the '/api/v1/tours' path only. So we can avoid writing them again and again. Hence we need to mention only the part that is needed to specify the path and/or the part of the path that is unique with that request being made. '/' means root. that is root of the url '/api/v1/tours' and '/:id' is used becouse parent path + /:id = /api/v1/tours/:id which is exactly what we were trying to write. 😎 
 */
-app.use('/api/v1/tours', tourRouter);// this line means that "tourRouter" is a middleware which has to be used for the path '/api/v1/tours' Now below is the middlware declaration function which happens to be an individual router as well. It is both, middleware and router, we desgined it like this.
+app.use('/api/v1/tours', tourRouter);// this line means that "tourRouter" is a middleware which has to be used for the path '/api/v1/tours'. It is both, middleware and router, we desgined it like this.
 
 /* code migrated to userRoutes.js
 const usersRouter = express.Router();//declated new router😎

@@ -1,12 +1,7 @@
 'use strict';
 
-const express = require('express');
-//const userController = require('./../controllers/userController');//Alternative Codeusing destructuring of the code.but it is a bit🤏less used method👇 
-const {getAllUsers,createUser,getOneUser,updateUser,deleteUser} = require('./../controllers/userController');
 
-/*code migrated to userController.js to apply MVC
-
-const getAllUsers=(request, response) => {
+exports.getAllUsers=(request, response) => {
     console.log(request.requestTime);
     response.status(500).json({
     status: 'error',
@@ -16,7 +11,7 @@ const getAllUsers=(request, response) => {
     //data: {}
     });
 };
-const createUser=(request, response) => {
+exports.createUser=(request, response) => {
     console.log(request.requestTime);
     response.status(500).json({
     status: 'error',
@@ -26,7 +21,7 @@ const createUser=(request, response) => {
     //data: {	}
     });
 };
-const getOneUser=(request, response) => {
+exports.getOneUser=(request, response) => {
     console.log(request.requestTime);
     response.status(500).json({
     status: 'error',
@@ -36,7 +31,7 @@ const getOneUser=(request, response) => {
     //data: { }
     });
 };
-const updateUser=(request, response) => {
+exports.updateUser=(request, response) => {
     console.log(request.requestTime);
     response.status(500).json({
     status: 'error',
@@ -46,7 +41,7 @@ const updateUser=(request, response) => {
     //data: {	}
     });
 };
-const deleteUser=(request, response) => {
+exports.deleteUser=(request, response) => {
     console.log(request.requestTime);
     response.status(500).json({
     status: 'error',
@@ -56,18 +51,3 @@ const deleteUser=(request, response) => {
     //data: {	}
     });
 };
-*/
-const router=express.Router();// it is convention to name the router as "router" while making a module for it. 
-//const usersRouter = express.Router();//declated new router😎
-router
-.route('/')
-.get(getAllUsers)
-.post(createUser);
-
-router
-.route('/:id')
-.get(getOneUser)
-.patch(updateUser)
-.delete(deleteUser);
-
-module.exports= router;
