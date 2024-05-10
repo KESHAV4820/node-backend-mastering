@@ -3,6 +3,7 @@
 const express = require('express');
 //const userController = require('./../controllers/userController');//Alternative Codeusing destructuring of the code.but it is a bit🤏less used method👇 
 const {getAllUsers,createUser,getOneUser,updateUser,deleteUser} = require('./../controllers/userController');
+// const userController = require('./../controllers/userController');
 
 /*code migrated to userController.js to apply MVC
 
@@ -59,6 +60,9 @@ const deleteUser=(request, response) => {
 */
 const router=express.Router();// it is convention to name the router as "router" while making a module for it. 
 //const usersRouter = express.Router();//declated new router😎
+
+//router.param('id',userController.checkID);// this will check if the data passed is allright or shitface.
+
 router
 .route('/')
 .get(getAllUsers)

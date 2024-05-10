@@ -50,10 +50,15 @@
 8️⃣in order to implement separate file segement for each resource for better code structure, we will need to create router for each resources, that is, small subapp for each router.
 9️⃣Concept we created different routers for different resources for having separation of concern between these resources.Basically, we created one small app or sub app for each of them(like tourRoutes.js or userRoutes.js) and putting them together in one main app file called app.js
 🔟Sub-routers has to be middleware or else show will you mount them onto bigger app router referance.
-1️⃣1️⃣ Creating "server.js file" but why!! 😨 becouse it's considered a good practise to keep all the things related to express in one file and every thing related to server in one file. 
-1️⃣2️⃣
-1️⃣3️⃣
-1️⃣4️⃣
+1️⃣1️⃣ Creating "server.js file" but why!! 😨 becouse it's considered a good practise to keep all the things related to express in one file and every thing related to server in one file. It is also the file where we have other data as well like database configuration or environment variable or some error handling stuff. All of these live in server.js which is our entery point 
+1️⃣2️⃣server.js will actually be our starter file where every thing for backend starts and it's here we listen to our server.
+1️⃣3️⃣app.use(express.static(`${__dirname}/public`));//Without this LOC you won't be able to access static contents of the project.And also note that IT WORK FOR ONLY THE STATIC FILES VIENote After using the express.static() middleware, you need to pass only 👉😨127.0.0.1:3000/overview.html even though the real path of the file is🥴 127.0.0.1:3000/public/overview.html. Becouse when a file is asked for, it looks around and if it can't find it there, it goes to public folder to find the same file. Hence if a file is already in the public folder, it will be found if it has been asked.And after this, it sets the root folder as the public folder, that is 127.0.0.1:3000 becomes the root folder for time being.
+----------Environments for Node---------
+1️⃣4️⃣ There are different environment settings in which Node.js development works. There are Production environment(default by Express), debugging environment, development environment and each environment has it's own usecase just like having fair copy and a rough copy while doing mathematics. in Development, you may want to develop along the lines of one testing database, but in production, it will have another database, loging in turned on/off.
+1️⃣5️⃣Every thing not related to express.js shall be done outside the app.js file. 🥴which is this file, app.js. We use app.js to only configure our express application.Environement variables are out of the scope of express variables.
+1️⃣6️⃣
+1️⃣7️⃣
+1️⃣8️⃣
 
 
 */
@@ -72,6 +77,9 @@ const app=express();// here express will add many of it's method to app variable
 //----------middle wares--------------
 app.use(morgan('dev'));// this returns [URL routes, status Code, time taken for response, size of response in bytes]
 app.use(express.json());// here "app.use()" is as middleware. It's called middleware. Why! Becouse it stands between "request" and "response". It's just a step that request goes through, and the data from body is added to request object.It is used to add a middleware function in middleware. YOu can consider it as pipeline. But there are various sections of this pipeline and you are adding those sections by using app.use() function and the parameter used like express.json() or any other function adds the specified function like a section to this pipeline.
+
+//👇this example is just for information.(SERVING STATIC FILE FROM FOLDER, NOT SOME ROUTE)
+app.use(express.static(`${__dirname}/public`));
 
 app.use((request, response, next) =>{
     console.log(`hello from the middleware🥴. More like middle kingdom.`);
@@ -303,10 +311,14 @@ app.use('/api/v1/users',userRouter);//turned it a middle ware👺😂😂 VIECon
 // LearnByHeart: this whole multirouting and mounting section has to be done before-hand to implement migration of different routers to different files moved in different folders. now these codes will be migrated
 
 //-----------starting a server-----------
+/*code migrated to server.js section
 const port =3000;
 app.listen(port, ()=>{
     console.log(`App is running on port ${port}...`);
 });
+*/
+//-----Exporting app to server file-------
+module.exports = app;
 
 
 

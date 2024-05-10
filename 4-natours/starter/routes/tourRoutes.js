@@ -99,12 +99,23 @@ const deleteTour=(request, response) => {	if (request.params.id *1 > toursData.l
 };
 */
 const router= express.Router();//Becouse it's a convention to name a Router as "router" when moving the router to a new file intended to be used like a module.
+/* VIERemember ItCode Testingcode upgrade👇👇
+router.param('id',(request,response,next,val) => {	
+    console.log(`Tour id is: ${val}`);// Code Testing
+    next();
+	});// this will give output only for tours resources, not the users resource. It is like a bunch of piplelines , sometimes comming together to give service for one particular middleware kind and other times, they remains separate showing different parallel pipes and the water(request, response) can be made to flow from one of the tubes only according to middleware routing setup.  
+*/
+    router.param('id',tourController.checkID);
+
+//creating a middleware to check the contents of body if name and price property exists. 
+router.param('id', tourController.checkBody);
 //code upgrade ⬆ const tourRouter = express.Router();//VIENew Element we created new router and now we are going to associate this router with only one kind of resource by using the new Router name in place of "app" and using it like a middleware.Becouse, "tourRouter" in itself is a modular router itself. these two LOC above makes a sub-application or mini-apps within the big app.
 
 router
 .route('/')
 .get(tourController.getAllToursData)
-.post(tourController.createTour);
+.post(tourController.checkBody,tourController.createTour);//SuperConceptTake A Good Look middleware chaining.LearnByHeart This will be used very often. 
+
 router
 .route('/:id')
 .get(tourController.getTour).patch(tourController.updateTour)
