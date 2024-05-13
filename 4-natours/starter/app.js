@@ -56,8 +56,8 @@
 ----------Environments for Node---------
 1️⃣4️⃣ There are different environment settings in which Node.js development works. There are Production environment(default by Express), debugging environment, development environment and each environment has it's own usecase just like having fair copy and a rough copy while doing mathematics. in Development, you may want to develop along the lines of one testing database, but in production, it will have another database, loging in turned on/off.
 1️⃣5️⃣Every thing not related to express.js shall be done outside the app.js file. 🥴which is this file, app.js. We use app.js to only configure our express application.Environement variables are out of the scope of express variables.
-1️⃣6️⃣
-1️⃣7️⃣
+1️⃣6️⃣ Concept: even though config.env files was declared in server.js file, still we are able to access it in app.js, without any import or anything else. Becouse the reading of the values from the files to node processer only needs to happen once, and then it is in the process and the process remains the same no matter in which file we are. Becouse environment variables are on the process. 
+1️⃣7️⃣Becouse of the above causes, if you have made any changes to config.env, on saving it, it won't be applied to process. for that, you have to restart the server. 
 1️⃣8️⃣
 
 
@@ -75,7 +75,10 @@ const { createSecureServer } = require('http2');
 
 const app=express();// here express will add many of it's method to app variable.
 //----------middle wares--------------
-app.use(morgan('dev'));// this returns [URL routes, status Code, time taken for response, size of response in bytes]
+console.log(process.env.NODE_ENV);//Code Testing//Issue Found:Output: Undefined for npm run start:prod but Output: development: for npm run start:dev
+if(process.env.NODE_ENV === 'development'){
+    app.use(morgan('dev'));// this returns [URL routes, status Code, time taken for response, size of response in bytes]
+}
 app.use(express.json());// here "app.use()" is as middleware. It's called middleware. Why! Becouse it stands between "request" and "response". It's just a step that request goes through, and the data from body is added to request object.It is used to add a middleware function in middleware. YOu can consider it as pipeline. But there are various sections of this pipeline and you are adding those sections by using app.use() function and the parameter used like express.json() or any other function adds the specified function like a section to this pipeline.
 
 //👇this example is just for information.(SERVING STATIC FILE FROM FOLDER, NOT SOME ROUTE)
