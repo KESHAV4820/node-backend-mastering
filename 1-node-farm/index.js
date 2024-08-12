@@ -38,7 +38,23 @@ lacture Notes:-
     💹Becouse of that, it supports better cross-platform utility.
     💹it has great potential to be used as stand alone business. That devs make their APIs, they don't even have frontend. Just the API and they sell it's access to the other devs.
 1️⃣4️⃣ Working of Node.js in Next section. Go there.
-1️⃣5️⃣ 
+
+-------------Working with MONGODB--------------------------------
+
+1️⃣5️⃣ During Mongo installation i had problem. The new version require you to download mongoshell in sparate file. once you installed the mongoDB, now you need to unzip the mongoshell folder and copy the contents of this folder into the folder named "shell", peers to the folder named "server" in the folder of mongoDB in Program Files in C drive. Now you are ready.
+1️⃣6️⃣ 🔵to create database: "use <databasename>" if this database name doesn't exist mongoDB will create one. If it is there, then it will switch to that database.
+    🔵For every entry, mongoDB will automatically assign a unique id to the entry. 
+    🔵to create a collection: "db.createCollection(<collectionname>)" or "db.<collectionname>.insert...()" both of them will create the collection. eg. db.createCollection(tours)  or db.tours.insertOne({}). 
+    🔵show dbs :-to show the database. by default, mongoDB creates many databases. admin, config, local, these three are created by default.
+    🔵show collections :-to show the table
+    🔵switch <databaseName> :- to select the database you want to jump to.  
+    🔵db.tours.insertMany([{},{},and so on...]) :-to insert many values at once.
+    🔵db.tours.insertOne({}) :-to insert single row.
+    🔵db.tours.find() :-to see all the records inserted.
+1️⃣7️⃣
+1️⃣8️⃣
+1️⃣9️⃣
+2️⃣0️⃣ 
 🔵🔵🔵
 */
 
