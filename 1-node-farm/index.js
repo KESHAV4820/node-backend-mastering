@@ -41,18 +41,34 @@ lacture Notes:-
 
 -------------Working with MONGODB--------------------------------
 
-1️⃣5️⃣ During Mongo installation i had problem. The new version require you to download mongoshell in sparate file. once you installed the mongoDB, now you need to unzip the mongoshell folder and copy the contents of this folder into the folder named "shell", peers to the folder named "server" in the folder of mongoDB in Program Files in C drive. Now you are ready.
+1️⃣5️⃣ 🔵During Mongo installation i had problem. The new version require you to download mongoshell in sparate file. once you installed the mongoDB, now you need to unzip the mongoshell folder and copy the contents of this folder into the folder named "shell", peers to the folder named "server" in the folder of mongoDB in Program Files in C drive. Now you are ready.
+    🔵 Step1 👉command to start mongoDB server: "mongod"
+    🔵 Step2 👉command to start mongoDB shell: "mongosh"
+    🔵 👉command to exit mongoDB shell: "quit" or "exit or ctrl+c or ctrl+d
+    🔵 👉 command to exit mongoDB server: ctrl+c
+since variable environment for both of them has been already set, you can execute these commands from any folder on this PC. ⚡⚡⚡
 1️⃣6️⃣ 🔵to create database: "use <databasename>" if this database name doesn't exist mongoDB will create one. If it is there, then it will switch to that database.
     🔵For every entry, mongoDB will automatically assign a unique id to the entry. 
     🔵to create a collection: "db.createCollection(<collectionname>)" or "db.<collectionname>.insert...()" both of them will create the collection. eg. db.createCollection(tours)  or db.tours.insertOne({}). 
     🔵show dbs :-to show the database. by default, mongoDB creates many databases. admin, config, local, these three are created by default.
-    🔵show collections :-to show the table
-    🔵switch <databaseName> :- to select the database you want to jump to.  
+    🔵show collections :-to show the table/collection.
+    🔵use <databaseName> :- to select the database you want to jump to.  
     🔵db.tours.insertMany([{},{},and so on...]) :-to insert many values at once.
     🔵db.tours.insertOne({}) :-to insert single row.
     🔵db.tours.find() :-to see all the records inserted.
-1️⃣7️⃣
-1️⃣8️⃣
+    🔵db.tours.find({name: "The Forest Hiker"}) :- to see the record with the value in the name parameter of the record object.
+    🔵 $ sign in mongoDB is reserved for operators like lesser than equal is written as $lte or greater than equal is written as $gte. And every time it is used, we use new object {} inside which the new output as determined by operators is stored and present. like db.tours.find({price:{$lte: 500}, rating: {$gte: 4.0}}) means that all the record objects that has price parameters less than equal to 500 AND rating greater than equal to 4.0 will be selected. as you can see, we haven't used any operator for AND, becouse that is understood in mongoDB. But to speically use AND we use it like this👇
+    🔵 db.tours.find({$or: [{parameter1: {logic or expression}}, {parameter2:{logic or expression}}]}); this is exactly how you do with $and: operator as well.
+    🔵db.tours.updateOne() :- to update one record object. Here we first specify the data object in 👉first object which has to be updated; 👉second object gives the inputs instruction using object $set:{} inside which we mention inputs inside yet antoher object to specify the update that has to be done. eg. db.tours.updateOne({name:"The Snow Adventurer"},{$set: {price: 597}}) Note: if this command has somehow referance to multiple entries, it will update only the one it encouters first.If we wanted to update all of those entries, we need updateMany()👇 db.tours.updateMany({price: {$gt: 500},rating: {$gte: 4.8}},{ $set:{premium: true}})
+    🔵db.tours.updateMany() :- to update many record objects. eg. db.tours.updateMany({name:"The Snow Adventurer"},{$set: {price: 597}}). Note: while using update statement, we can update the parts of the content, add or remove some part , totally remove the whole content as well. But for that purpose we use 👉replaceOne(), 👉replaceMany(). rule for first and second object remains the same. 
+    🔵db.tours.deleteOne({condition containing argument object}) :-to delete one record object e.g: db.tours.deleteOne({rating: {$lte: 4.5}});
+    🔵db.tours.deleteMany({condition containing argument object}) :-to delete many record objects
+    🔵db.tours.find().pretty() :-to see all the records inserted in pretty format
+1️⃣7️⃣ All the above operations can be done in MongoDB Compass software. It's just like Admin4 tool i had used for postgreSQL. A GUI based system of interaction with database. 
+1️⃣8️⃣              ⚡⚡CREATING REMOTE HOSTED DATABASE⚡⚡
+    🔵To create a remote hosted database, you have to use MongoDBAtlas cloud service which is database as service provider that looks after all the headache of managing and scaling the databases. 
+    🔵It keeps our data on cloud, hence we can develop our application from anywhere😎.
+    🔵To create a remote hosted database, you have to create an account on MongoDBAtlas cloud.
 1️⃣9️⃣
 2️⃣0️⃣ 
 🔵🔵🔵
